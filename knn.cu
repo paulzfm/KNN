@@ -40,6 +40,7 @@ __global__ void distances(int *data, int *dis, int m, int n)
     int ty = threadIdx.y;
     int i = BLOCK_SZ * blockIdx.x + tx;
     int j = BLOCK_SZ * blockIdx.y + ty;
+    if (i >= m || j >= m) return;
 
     __shared__ int matA[BLOCK_SZ][BLOCK_SZ];
     __shared__ int matB[BLOCK_SZ][BLOCK_SZ];
