@@ -36,6 +36,7 @@ int* load(const char *input)
 
 __global__ void distances(int *data, int *dis, int m, int n)
 {
+    printf(":%d, %d\n", blockDim.x, blockDim.y);
     int tx = threadIdx.x;
     int ty = threadIdx.y;
     int i = BLOCK_SZ * blockIdx.x + tx;
