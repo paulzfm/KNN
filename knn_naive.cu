@@ -48,6 +48,7 @@ __global__ void distances(int *data, int *dis, int m, int n)
         }
         dis[i * m + j] = dis[j * m + i] = tmp;
     } else if (i == j) {
+printf(":%d\n", i);
         dis[i * m + i] = INF;
     }
 }
