@@ -47,9 +47,9 @@ __global__ void distances(int *data, int *dis, int m, int n)
     int tmp1;
     int tmp2 = 0;
 
-    if (i == j) {
-        dis[i * m + j] = INF;
-    } else {
+    // if (i == j) {
+        // dis[i * m + j] = INF;
+    // } else {
         for (int k = 0; k < n; k += BLOCK_SZ) {
             // load sub matrix to shared memory
             matA[tx][ty] = ((i < m) && (k + ty < n)) ? data[i * n + (k + ty)] : 0;
@@ -66,7 +66,7 @@ __global__ void distances(int *data, int *dis, int m, int n)
 
         // record answer
         dis[i * m + j] = dis[j * m + i] = tmp2;
-    }
+    // }
 }
 
 __global__ void sort(int *dis, int *result, int m, int k)
