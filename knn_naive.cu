@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #define INF (1 << 30)
 #define BLOCK_SZ 32
@@ -76,6 +77,8 @@ void knn(int *data, int *result)
     int block2 = ceil(m / BLOCK_SZ);
     float timer;
 
+    int *dis = (int*)malloc(sizeof(int) * m * m);
+
     cudaEvent_t start, stop;
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
@@ -87,9 +90,13 @@ void knn(int *data, int *result)
     cudaMemcpy(d_data, data, sizeof(int) * m * n, cudaMemcpyHostToDevice);
 
     distances<<<block1, BLOCK_SZ>>>(d_data, d_dis, m, n);
-    cudaStreamSynchronize(0);
-    sort<<<block2, BLOCK_SZ>>>(d_dis, d_result, m, k);
+    // cudaStreamSynchronize(0);
+    cudaMemcpy(dis, d_dis, sizeof(int) * m * m, cudaMemcpyDeviceToHost);
+for (int i = 0; i < m * m; i++) {
+    printf("%d ", dis[i]);
+}printf("\n");
 
+    sort<<<block2, BLOCK_SZ>>>(d_dis, d_result, m, k);
     cudaMemcpy(result, d_result, sizeof(int) * m * k, cudaMemcpyDeviceToHost);
 
     cudaEventRecord(stop);
