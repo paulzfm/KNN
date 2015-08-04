@@ -36,15 +36,14 @@ int* load(const char *input)
 
 __global__ void distances(int *data, int *dis, int m, int n)
 {
-    __shared__ int matA[BLOCK_SZ][BLOCK_SZ];
-    __shared__ int matB[BLOCK_SZ][BLOCK_SZ];
-
     int tx = threadIdx.x;
     int ty = threadIdx.y;
     int i = BLOCK_SZ * blockIdx.x + tx;
     int j = BLOCK_SZ * blockIdx.y + ty;
     if (i > j || i >= m || j >= m) return;
 
+    __shared__ int matA[BLOCK_SZ][BLOCK_SZ];
+    __shared__ int matB[BLOCK_SZ][BLOCK_SZ];
     int tmp1;
     int tmp2 = 0;
 
