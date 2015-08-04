@@ -40,7 +40,6 @@ __global__ void distances(int *data, int *dis, int m, int n)
     int ty = threadIdx.y;
     int i = BLOCK_SZ * blockIdx.x + tx;
     int j = BLOCK_SZ * blockIdx.y + ty;
-    if (i >= m || j >= m) return;
 
     __shared__ int matA[BLOCK_SZ][BLOCK_SZ];
     __shared__ int matB[BLOCK_SZ][BLOCK_SZ];
@@ -52,8 +51,8 @@ __global__ void distances(int *data, int *dis, int m, int n)
     // } else {
         for (int k = 0; k < n; k += BLOCK_SZ) {
             // load sub matrix to shared memory
-            matA[tx][ty] = (k + ty < m) ? data[i * n + (k + ty)] : 0;
-            matB[tx][ty] = (k + tx < m) ? data[j * n + (k + tx)] : 0;
+            matA[tx][ty] = ((i < m) && (k + ty < m)) ? data[i * n + (k + ty)] : 0;
+            matB[tx][ty] = ((j < m) && (k + tx < m)) ? data[j * n + (k + tx)] : 0;
             __syncthreads();
 
             // compute partial sum
