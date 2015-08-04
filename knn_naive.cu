@@ -54,7 +54,7 @@ __global__ void distances(int *data, int *dis, int m, int n)
 __global__ void sort(int *dis, int *result, int m, int k)
 {
     int i = blockDim.x * blockIdx.x + threadIdx.x;
-    if (idx >= m) return;
+    if (i >= m) return;
     int tmp;
     for (int j = 0; j < k; j++) { // find j-th nearest neighbor
         tmp = INF;
@@ -93,7 +93,7 @@ void knn(int *data, int *result)
     cudaMemcpy(result, d_result, sizeof(int) * m * k, cudaMemcpyDeviceToHost);
 
     cudaEventRecord(stop);
-    cudaEventSynchorize(stop);
+    cudaEventSynchronize(stop);
     cudaEventElapsedTime(&timer, start, stop);
 
     printf("Time elapsed: %.4lf ms\n", timer);
