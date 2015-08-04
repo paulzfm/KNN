@@ -37,7 +37,6 @@ int* load(const char *input)
 __global__ void distances(int *data, int *dis, int m, int n)
 {
     int idx = blockDim.x * blockIdx.x + threadIdx.x;
-printf("Hi, I am %d!\n", idx);
     if (idx >= m * m) return;
     int i = idx / m;
     int j = idx % m;
@@ -48,10 +47,7 @@ printf("Hi, I am %d!\n", idx);
                 * (data[i * n + l] - data[j * n + l]);
         }
         dis[i * m + j] = dis[j * m + i] = tmp;
-    }
-
-    if (i == j) {
-printf("::%d\n", i);
+    } else if (i == j) {
         dis[i * m + i] = INF;
     }
 }
@@ -81,8 +77,6 @@ void knn(int *data, int *result)
     int block2 = ceil(m / (double)BLOCK_SZ);
     float timer;
 
-    int *dis = (int*)malloc(sizeof(int) * m * m);
-
     cudaEvent_t start, stop;
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
@@ -94,12 +88,7 @@ void knn(int *data, int *result)
     cudaMemcpy(d_data, data, sizeof(int) * m * n, cudaMemcpyHostToDevice);
 
     distances<<<block1, BLOCK_SZ>>>(d_data, d_dis, m, n);
-    // cudaStreamSynchronize(0);
-    cudaMemcpy(dis, d_dis, sizeof(int) * m * m, cudaMemcpyDeviceToHost);
-for (int i = 0; i < m * m; i++) {
-    printf("%d ", dis[i]);
-}printf("\n");
-
+    cudaStreamSynchronize(0);
     sort<<<block2, BLOCK_SZ>>>(d_dis, d_result, m, k);
     cudaMemcpy(result, d_result, sizeof(int) * m * k, cudaMemcpyDeviceToHost);
 
