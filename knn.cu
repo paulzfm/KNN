@@ -47,6 +47,9 @@ __global__ void distances(int *data, int *dis, int m, int n)
     int tmp1;
     int tmp2 = 0;
 
+    if (i == j) {
+        dis[i * m + j] = INF;
+    } else {
         for (int k = 0; k < n; k += BLOCK_SZ) {
             // load sub matrix to shared memory
             matA[tx][ty] = (k + ty < m) ? data[i * n + (k + ty)] : 0;
