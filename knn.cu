@@ -47,26 +47,27 @@ __global__ void distances(int *data, int *dis, int m, int n)
     int tmp1;
     int tmp2 = 0;
 
-    // if (i == j) {
-        // dis[i * m + j] = INF;
-    // } else {
-        for (int k = 0; k < n; k += BLOCK_SZ) {
-            // load sub matrix to shared memory
-            matA[tx][ty] = (k + ty < n) ? data[i * n + (k + ty)] : 0;
-            matB[tx][ty] = (k + tx < n) ? data[j * n + (k + tx)] : 0;
-            __syncthreads();
 
-            // compute partial sum
+    for (int k = 0; k < n; k += BLOCK_SZ) {
+        // load sub matrix to shared memory
+        matA[tx][ty] = (k + ty < n) ? data[i * n + (k + ty)] : 0;
+        matB[tx][ty] = (k + tx < n) ? data[j * n + (k + tx)] : 0;
+        __syncthreads();
+
+        if (i < j) { // compute partial sum
             for (int w = 0; w < BLOCK_SZ; w++) {
                 tmp1 = matA[tx][w] - matB[w][ty];
                 tmp2 += tmp1 * tmp1;
             }
-            __syncthreads();
         }
+        __syncthreads();
+    }
 
-        // record answer
+    if (i < j) {
         dis[i * m + j] = dis[j * m + i] = tmp2;
-    // }
+    } else if (i == j) {
+        dis[i * m + j] = INF;
+    }
 }
 
 __global__ void sort(int *dis, int *result, int m, int k)
