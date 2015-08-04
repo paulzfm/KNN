@@ -66,7 +66,7 @@ __global__ void distances(int *data, int *dis, int m, int n)
         }
 
         // record answer
-        dis[i * m + j] = tmp2;
+        dis[i * m + j] = dis[j * m + i] = tmp2;
     }
 }
 
