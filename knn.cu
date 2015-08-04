@@ -3,7 +3,7 @@
 #include <math.h>
 
 #define INF 1073741824
-#define BLOCK_SZ 16
+#define BLOCK_SZ 4
 
 int m; // nodes
 int n; // dimensions
