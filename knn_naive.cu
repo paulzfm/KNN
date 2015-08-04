@@ -37,6 +37,7 @@ int* load(const char *input)
 __global__ void distances(int *data, int *dis, int m, int n)
 {
     int idx = blockDim.x * blockIdx.x + threadIdx.x;
+printf("Hi, I am %d!\n", idx);
     if (idx >= m * m) return;
     int i = idx / m;
     int j = idx % m;
