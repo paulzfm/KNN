@@ -47,13 +47,10 @@ __global__ void distances(int *data, int *dis, int m, int n)
     int tmp1;
     int tmp2 = 0;
 
-    if (i == j) {
-        dis[i * m + j] = INF;
-    } else {
         for (int k = 0; k < n; k += BLOCK_SZ) {
             // load sub matrix to shared memory
-            matA[tx][ty] = data[i * n + (k + ty)];
-            matB[tx][ty] = data[j * n + (k + tx)];
+            matA[tx][ty] = (k + ty < m) ? data[i * n + (k + ty)] : 0;
+            matB[tx][ty] = (k + tx < m) ? data[j * n + (k + tx)] : 0;
             __syncthreads();
 
             // compute partial sum
