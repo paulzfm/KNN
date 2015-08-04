@@ -91,6 +91,7 @@ __global__ void sort(int *dis, int *result, int m, int k)
 void knn(int *data, int *result)
 {
     int *d_data, *d_result, *d_dis;
+    int *dis = (int*)malloc(sizeof(int) * m * m);
     int block = ceil(m / (double)BLOCK_SZ);
     float timer;
 
@@ -105,7 +106,15 @@ void knn(int *data, int *result)
     cudaMemcpy(d_data, data, sizeof(int) * m * n, cudaMemcpyHostToDevice);
 
     distances<<<dim3(block, block, 1), dim3(BLOCK_SZ, BLOCK_SZ, 1)>>>(d_data, d_dis, m, n);
-    cudaStreamSynchronize(0);
+    // cudaStreamSynchronize(0);
+    cudaMemcpy(dis, d_dis, sizeof(int) * m * m, cudaMemcpyDeviceToHost);
+for (int i = 0; i < m; i++) {
+    for (int j = 0; j < m; j++) {
+        printf("%d ", dis[i * m + j]);
+    }
+    printf("\n");
+}
+
     sort<<<block, BLOCK_SZ>>>(d_dis, d_result, m, k);
     cudaMemcpy(result, d_result, sizeof(int) * m * k, cudaMemcpyDeviceToHost);
 
