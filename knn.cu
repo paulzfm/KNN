@@ -47,7 +47,6 @@ __global__ void distances(int *data, int *dis, int m, int n)
     int tmp1;
     int tmp2 = 0;
 
-
     for (int k = 0; k < n; k += BLOCK_SZ) {
         // load sub matrix to shared memory
         matA[tx][ty] = (k + ty < n) ? data[i * n + (k + ty)] : 0;
@@ -106,15 +105,7 @@ void knn(int *data, int *result)
     cudaMemcpy(d_data, data, sizeof(int) * m * n, cudaMemcpyHostToDevice);
 
     distances<<<dim3(block, block, 1), dim3(BLOCK_SZ, BLOCK_SZ, 1)>>>(d_data, d_dis, m, n);
-    // cudaStreamSynchronize(0);
-    cudaMemcpy(dis, d_dis, sizeof(int) * m * m, cudaMemcpyDeviceToHost);
-for (int i = 0; i < m; i++) {
-    for (int j = 0; j < m; j++) {
-        printf("%d ", dis[i * m + j]);
-    }
-    printf("\n");
-}
-
+    cudaStreamSynchronize(0);
     sort<<<block, BLOCK_SZ>>>(d_dis, d_result, m, k);
     cudaMemcpy(result, d_result, sizeof(int) * m * k, cudaMemcpyDeviceToHost);
 
