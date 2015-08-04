@@ -77,8 +77,8 @@ __global__ void sort(int *dis, int *result, int m, int k)
 void knn(int *data, int *result)
 {
     int *d_data, *d_result, *d_dis;
-    int block1 = ceil(m * m / BLOCK_SZ);
-    int block2 = ceil(m / BLOCK_SZ);
+    int block1 = ceil(m * m / (double)BLOCK_SZ);
+    int block2 = ceil(m / (double)BLOCK_SZ);
     float timer;
 
     int *dis = (int*)malloc(sizeof(int) * m * m);
