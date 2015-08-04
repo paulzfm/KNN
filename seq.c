@@ -80,7 +80,6 @@ int main(int argc, char **argv)
     int *data = load(argv[1]);
     int *result = (int*)malloc(sizeof(int) * m * k);
     int *dis = (int*)malloc(sizeof(int) * m * m);
-    printf("load sample: %d %d %d\n", m, n, k);
 
     clock_t start, stop;
     start = clock();
@@ -88,7 +87,7 @@ int main(int argc, char **argv)
     knn(data, dis, result);
 
     stop = clock();
-    printf("time elapsed: %.4lf ms\n", 1000.0 * (stop - start) / CLOCKS_PER_SEC);
+    // printf("time elapsed: %.4lf ms\n", 1000.0 * (stop - start) / CLOCKS_PER_SEC);
 
     int i, j;
     for (i = 0; i < m; i++) {
