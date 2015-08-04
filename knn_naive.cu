@@ -55,7 +55,7 @@ __global__ void sort(int *dis, int *result, int m, int k)
 {
     int i = blockDim.x * blockIdx.x + threadIdx.x;
     if (i >= m) return;
-    int tmp;
+    int tmp, idx;
     for (int j = 0; j < k; j++) { // find j-th nearest neighbor
         tmp = INF;
         for (int l = i * m; l < (i + 1) * m; l++) {
