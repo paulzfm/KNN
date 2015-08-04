@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define INF (1 << 30)
+#define INF 1073741824
 #define BLOCK_SZ 32
 
 int m; // nodes
