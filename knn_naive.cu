@@ -41,13 +41,13 @@ __global__ void distances(int *data, int *dis, int m, int n)
     int j = idx % m;
     int tmp = 0;
     if (i < j) {
-        for (int l = 0; l < n; l++) {
+        for (int l = 0; l < n; l++) { // for each dimension
             tmp += (data[i * n + l] - data[j * n + l])
                 * (data[i * n + l] - data[j * n + l]);
         }
         dis[i * m + j] = dis[j * m + i] = tmp;
     } else if (i == j) {
-        dis[i * m + j] = INF;
+        dis[i * m + i] = INF;
     }
 }
 
