@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define INF (1 << 30)
+#define INF 1073741824
 
 int m; // nodes
 int n; // dimensions
