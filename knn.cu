@@ -55,7 +55,7 @@ __global__ void distances(int *data, int *dis, int m, int n)
         // compute partial sum
         for (int w = 0; w < BLOCK_SZ; w++) {
             tmp1 = matA[tx][w] - matB[w][ty];
-            tmp2 += sub * sub;
+            tmp2 += tmp1 * tmp1;
         }
         __syncthreads();
     }
