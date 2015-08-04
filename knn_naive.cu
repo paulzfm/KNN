@@ -47,8 +47,10 @@ __global__ void distances(int *data, int *dis, int m, int n)
                 * (data[i * n + l] - data[j * n + l]);
         }
         dis[i * m + j] = dis[j * m + i] = tmp;
-    } else if (i == j) {
-printf(":%d\n", i);
+    }
+
+    if (i == j) {
+printf("::%d\n", i);
         dis[i * m + i] = INF;
     }
 }
