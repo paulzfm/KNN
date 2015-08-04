@@ -41,27 +41,31 @@ __global__ void distances(int *data, int *dis, int m, int n)
 
     int tx = threadIdx.x;
     int ty = threadIdx.y;
-    int i = BLOCK_SZ * blockIdx.x;
-    int j = BLOCK_SZ * blockIdx.y;
+    int i = BLOCK_SZ * blockIdx.x + tx;
+    int j = BLOCK_SZ * blockIdx.y + ty;
     int tmp1;
     int tmp2 = 0;
 
-    for (int k = 0; k < n; k += BLOCK_SZ) {
-        // load sub matrix to shared memory
-        matA[tx][ty] = data[(i + tx) * n + (k + ty)];
-        matB[tx][ty] = data[(j + ty) * n + (k + tx)];
-        __syncthreads();
+    if (i == j) {
+        dis[i * m + j] = INF;
+    } else {
+        for (int k = 0; k < n; k += BLOCK_SZ) {
+            // load sub matrix to shared memory
+            matA[tx][ty] = data[i * n + (k + ty)];
+            matB[tx][ty] = data[j * n + (k + tx)];
+            __syncthreads();
 
-        // compute partial sum
-        for (int w = 0; w < BLOCK_SZ; w++) {
-            tmp1 = matA[tx][w] - matB[w][ty];
-            tmp2 += tmp1 * tmp1;
+            // compute partial sum
+            for (int w = 0; w < BLOCK_SZ; w++) {
+                tmp1 = matA[tx][w] - matB[w][ty];
+                tmp2 += tmp1 * tmp1;
+            }
+            __syncthreads();
         }
-        __syncthreads();
-    }
 
-    // record answer
-    dis[(i + tx) * m + (j + ty)] = tmp2;
+        // record answer
+        dis[i * m + j] = tmp2;
+    }
 }
 
 __global__ void sort(int *dis, int *result, int m, int k)
