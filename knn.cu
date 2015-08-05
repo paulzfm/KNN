@@ -186,7 +186,8 @@ __global__ void ssort(int *dis, int *result, int m, int k)
             buffer[idx] = j;
             max = 0;
             for (int l = 0; l < k; l++) {
-                if (dis[start + l] > max) {
+                if (dis[start + l] > max ||
+                    (dis[start + l] == max && l < idx)) { // when two distances are the same, index first
                     max = dis[start + l];
                     idx = l;
                 }
