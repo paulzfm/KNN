@@ -177,7 +177,7 @@ void knn(int *data, int *result)
 
     // distances2<<<dim3(block, block, 1), dim3(BLOCK_SZ, BLOCK_SZ, 1)>>>(d_data, d_dis, m, n);
     // distances3<<<dim3(block1, block1, 4), dim3(BLOCK_SZ, BLOCK_SZ, 1)>>>(d_data, d_dis, m, n, block1);
-    distances3<<<dim3(block1, block1, 4), dim3(BLOCK_SZ / 2, BLOCK_SZ / 2, 4)>>>(d_data, d_dis, m, n, block1);
+    distances33<<<dim3(block1, block1, 4), dim3(BLOCK_SZ / 2, BLOCK_SZ / 2, 4)>>>(d_data, d_dis, m, n, block1);
     cudaStreamSynchronize(0);
     sort<<<block, BLOCK_SZ>>>(d_dis, d_result, m, k);
     cudaMemcpy(result, d_result, sizeof(int) * m * k, cudaMemcpyDeviceToHost);
