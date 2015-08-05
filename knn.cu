@@ -4,6 +4,7 @@
 
 #define INF 1073741824
 #define BLOCK_SZ 16
+#define BUFFER_SZ 32
 
 int m; // nodes
 int n; // dimensions
@@ -232,7 +233,8 @@ void knn(int *data, int *result)
     cudaEventElapsedTime(&timer1, start, stop);
 
     cudaEventRecord(start);
-    sort<<<block, BLOCK_SZ>>>(d_dis, d_result, m, k);
+    // sort<<<block, BLOCK_SZ>>>(d_dis, d_result, m, k);
+    ssort<<<block, BLOCK_SZ>>>(d_dis, d_result, m, k);
     cudaEventRecord(stop);
     cudaEventSynchronize(stop);
     cudaEventElapsedTime(&timer2, start, stop);
