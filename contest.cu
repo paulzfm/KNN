@@ -1,13 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <unistd.h>
-
-#define __WAIT_AVAILABLE_GPU(x) \
-    cudaSetDevice(x);\
-    int __waitGPU;\
-    while (cudaMalloc((void**)&__waitGPU, sizeof(int)) == 46)\
-    {fprintf(stderr, "[gpu] waiting...\n");sleep(1);}
 
 #define INF 1073741824
 #define BLOCK_SZ 16
@@ -318,8 +311,6 @@ void knn_large(int *data, int *result, float *timer)
 
 int main(int argc, char **argv)
 {
-    __WAIT_AVAILABLE_GPU(1);
-
     if (argc != 2) {
         fprintf(stderr, "Usage: %s input_file\n", argv[0]);
         exit(1);
