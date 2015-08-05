@@ -74,7 +74,7 @@ void knn(int *data, int *result)
 {
     int *d_data, *d_result, *d_dis;
     int block = ceil(m / (double)BLOCK_SZ);
-    float timer;
+    float timer1, timer2;
 
     cudaEvent_t start, stop;
     cudaEventCreate(&start);
@@ -92,7 +92,7 @@ void knn(int *data, int *result)
     cudaEventElapsedTime(&timer1, start, stop);
 
     cudaEventRecord(start);
-    sort<<<block2, BLOCK_SZ>>>(d_dis, d_result, m, k);
+    sort<<<block, BLOCK_SZ>>>(d_dis, d_result, m, k);
     cudaEventRecord(stop);
     cudaEventSynchronize(stop);
     cudaEventElapsedTime(&timer, start, stop);
