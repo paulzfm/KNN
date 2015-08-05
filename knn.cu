@@ -181,8 +181,7 @@ __global__ void ssort(int *dis, int *result, int m, int k)
 
     // traverse the remaining elements to select the k minimal
     for (int j = k; j < m; j++) {
-        if (dis[start + j] < max ||
-            (dis[start + j] == max && j < buffer[idx])) {
+        if (dis[start + j] < max) {
             dis[start + idx] = dis[start + j];
             buffer[idx] = j;
             max = 0;
@@ -236,8 +235,8 @@ void knn(int *data, int *result)
     cudaEventElapsedTime(&timer1, start, stop);
 
     cudaEventRecord(start);
-    // sort<<<block, BLOCK_SZ>>>(d_dis, d_result, m, k);
-    ssort<<<block, BLOCK_SZ>>>(d_dis, d_result, m, k);
+    sort<<<block, BLOCK_SZ>>>(d_dis, d_result, m, k);
+    // ssort<<<block, BLOCK_SZ>>>(d_dis, d_result, m, k);
     cudaEventRecord(stop);
     cudaEventSynchronize(stop);
     cudaEventElapsedTime(&timer2, start, stop);
