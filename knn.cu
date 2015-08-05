@@ -163,30 +163,39 @@ void knn(int *data, int *result)
     int *dis = (int*)malloc(sizeof(int) * m * m);
     int block = ceil(m / (double)BLOCK_SZ);
     int block1 = ceil(block / 2.0);
-    float timer;
+    float timer1, timer2;
 
     cudaEvent_t start, stop;
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
-    cudaEventRecord(start);
 
     cudaMalloc((void**)&d_data, sizeof(int) * m * n);
     cudaMalloc((void**)&d_result, sizeof(int) * m * k);
     cudaMalloc((void**)&d_dis, sizeof(int) * m * m);
     cudaMemcpy(d_data, data, sizeof(int) * m * n, cudaMemcpyHostToDevice);
 
+    cudaEventRecord(start);
     // distances2<<<dim3(block, block, 1), dim3(BLOCK_SZ, BLOCK_SZ, 1)>>>(d_data, d_dis, m, n);
     // distances3<<<dim3(block1, block1, 4), dim3(BLOCK_SZ, BLOCK_SZ, 1)>>>(d_data, d_dis, m, n, block1);
     distances33<<<dim3(block1, block1, 4), dim3(BLOCK_SZ / 2, BLOCK_SZ / 2, 4)>>>(d_data, d_dis, m, n, block1);
-    cudaStreamSynchronize(0);
-    sort<<<block, BLOCK_SZ>>>(d_dis, d_result, m, k);
-    cudaMemcpy(result, d_result, sizeof(int) * m * k, cudaMemcpyDeviceToHost);
-
     cudaEventRecord(stop);
     cudaEventSynchronize(stop);
-    cudaEventElapsedTime(&timer, start, stop);
+    cudaEventElapsedTime(&timer1, start, stop);
 
-    fprintf(stderr, "Time elapsed: %.4lf ms\n", timer);
+    cudaEventRecord(start);
+    sort<<<block, BLOCK_SZ>>>(d_dis, d_result, m, k);
+    cudaEventRecord(stop);
+    cudaEventSynchronize(stop);
+    cudaEventElapsedTime(&timer2, start, stop);
+
+    cudaMemcpy(result, d_result, sizeof(int) * m * k, cudaMemcpyDeviceToHost);
+
+    // cudaEventRecord(stop);
+    // cudaEventSynchronize(stop);
+    // cudaEventElapsedTime(&timer, start, stop);
+
+    fprintf(stderr, "distance: %.4lf ms\n", timer1);
+    fprintf(stderr, "sort: %.4lf ms\n", timer2);
 
     cudaFree(d_data);
     cudaFree(d_result);
