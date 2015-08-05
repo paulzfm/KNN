@@ -331,11 +331,11 @@ int main(int argc, char **argv)
     float timer;
 
     if (m == SMALL_M) {
-        knn_small(data, result, timer);
+        knn_small(data, result, &timer);
     } else if (m == MIDDLE_M) {
-        knn_middle(data, result, timer);
+        knn_middle(data, result, &timer);
     } else if (m == LARGE_M) {
-        knn_large(data, result, timer);
+        knn_large(data, result, &timer);
     } else {
         fprintf(stderr, "unsupported m: %d\n", m);
         exit(1);
