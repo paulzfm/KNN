@@ -1,6 +1,6 @@
 import random
 
-R = 40
+R = 50
 
 def check(samples, m, k):
     dis = [[1073741824 for i in range(m)] for j in range(m)]
