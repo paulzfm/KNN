@@ -6,6 +6,7 @@
 #define INF 1073741824
 #define BLOCK_SZ 16
 #define HEAP_SZ 32
+#define MAX_M 16384
 
 int m; // nodes
 int n; // dimensions
