@@ -1,4 +1,4 @@
-targets : all
+targets : contest knn
 
 contest: contest.cu
 	nvcc contest.cu -o contest
