@@ -1,9 +1,7 @@
 import random
 
 def check(samples, m):
-    dis = [[]]
-    for i in range(m):
-        dis[i][i] = 0
+    dis = [[0 for i in range(m)] for j in range(m)]
 
     for i in range(m):
         for j in range(i):
