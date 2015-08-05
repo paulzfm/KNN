@@ -191,48 +191,17 @@ __global__ void sort_middle(int *dis, int *result)
 __global__ void sort_large(int *dis, int *result)
 {
     int i = blockDim.x * blockIdx.x + threadIdx.x;
-
-    const int start = i * LARGE_M;
-    int buffer[LARGE_K];
-
-    // find the max value in first k elements
-    int max = 0;
-    int idx;
-    for (int j = 0; j < LARGE_K; j++) {
-        buffer[j] = j;
-        if (dis[start + j] > max) {
-            max = dis[start + j];
-            idx = j;
-        }
-    }
-
-    // traverse the remaining elements to select the k minimal
-    for (int j = LARGE_K; j < LARGE_M; j++) {
-        if (dis[start + j] < max) {
-            dis[start + idx] = dis[start + j];
-            buffer[idx] = j;
-            max = 0;
-            for (int l = 0; l < LARGE_K; l++) {
-                if (dis[start + l] > max) {
-                    max = dis[start + l];
-                    idx = l;
-                }
-            }
-        }
-    }
-
-    // sort the k elements
+    int tmp, idx;
     for (int j = 0; j < LARGE_K; j++) { // find j-th nearest neighbor
-        max = INF; // use max as "min" here to save register resource
-        for (int l = 0; l < LARGE_K; l++) {
-            if (dis[start + l] < max ||
-                (dis[start + l] == max && buffer[l] < buffer[idx])) {
-                max = dis[start + l];
+        tmp = INF;
+        for (int l = i * LARGE_M; l < (i + 1) * LARGE_M; l++) {
+            if (dis[l] < tmp) {
+                tmp = dis[l];
                 idx = l;
             }
         }
-        result[i * LARGE_K + j] = buffer[idx];
-        dis[start + idx] = INF;
+        result[i * LARGE_K + j] = idx % LARGE_M;
+        dis[idx] = INF;
     }
 }
 
