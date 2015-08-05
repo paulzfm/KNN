@@ -1,12 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <thrust/sort.h>
 
 #define INF 1073741824
 #define BLOCK_SZ 16
-#define HEAP_SZ 32
-#define MAX_M 16384
 
 int m; // nodes
 int n; // dimensions
@@ -162,23 +159,51 @@ __global__ void sort(int *dis, int *result, int m, int k)
     }
 }
 
-__device__ void sort_by_key(int *dis, int *result, int i, int m, int k)
-{
-    int values[MAX_M];
-    for (int j = 0; j < m; j++) {
-        values[j] = j;
-    }
-    thrust::sort_by_key(dis + (i * m), dis + (i + 1) * m, values);
-    for (int j = 0; j < k; j++) {
-        result[i * k + j] = values[j];
-    }
-}
-
-__global__ void tsort(int *dis, int *result, int m, int k)
+__global__ void ssort(int *dis, int *result, int m, int k)
 {
     int i = blockDim.x * blockIdx.x + threadIdx.x;
     if (i >= m) return;
-    sort_by_key(dis, result, i, m, k);
+
+    int start = i * m;
+    int buffer[BUFFER_SZ];
+
+    // find the max value in first k elements
+    int max = INF;
+    int idx;
+    for (int j = 0; j < k; j++) {
+        if (dis[start + j] >= max) {
+            max = dis[start + j];
+            idx = j;
+        }
+        buffer[j] = j;
+    }
+
+    // traverse the remaining elements to select the k minimal
+    for (int j = k + 1; j < m; j++) {
+        if (dis[start + j] < max) {
+            dis[idx] = dis[start + j];
+            buffer[idx] = start + j;
+            for (int l = 0; l < k; l++) {
+                if (dis[start + l] >= max) {
+                    max = dis[start + l];
+                    idx = l;
+                }
+            }
+        }
+    }
+
+    // sort the k elements
+    for (int j = 0; j < k; j++) { // find j-th nearest neighbor
+        max = INF; // use max as "min" here to save register resource
+        for (int l = 0; l < k; l++) {
+            if (dis[start + l] < max) {
+                max = dis[start + l];
+                idx = l;
+            }
+        }
+        result[i * k + j] = buffer[idx];
+        dis[start + idx] = INF;
+    }
 }
 
 void knn(int *data, int *result)
@@ -207,8 +232,7 @@ void knn(int *data, int *result)
     cudaEventElapsedTime(&timer1, start, stop);
 
     cudaEventRecord(start);
-    // sort<<<block, BLOCK_SZ>>>(d_dis, d_result, m, k);
-    tsort<<<block, BLOCK_SZ>>>(d_dis, d_result, m, k);
+    sort<<<block, BLOCK_SZ>>>(d_dis, d_result, m, k);
     cudaEventRecord(stop);
     cudaEventSynchronize(stop);
     cudaEventElapsedTime(&timer2, start, stop);
