@@ -3,7 +3,7 @@
 #include <math.h>
 
 #define INF 1073741824
-#define BLOCK_SZ 16
+#define BLOCK_SZ 32
 
 int m; // nodes
 int n; // dimensions
@@ -159,9 +159,38 @@ __global__ void sort(int *dis, int *result, int m, int k)
     }
 }
 
-__global__ void qsort()
+__global__ void ssort(int *dis, int *result, int m, int k)
 {
+    int i = blockDim.x * blockIdx.x + threadIdx.x;
+    if (i >= m) return;
 
+    // find the max value in first k elements
+    int max = INF;
+    int idx;
+    int l;
+    for (l = i * m; l < i * m + k; l++) {
+        if (dis[l] >= max) {
+            max = dis[l];
+            idx = l;
+        }
+        result[i * k + l % m] = l % m;
+    }
+
+    // traverse the remaining elements to select the k minimal
+    for (; l < (i + 1) * m; l++) {
+        if (dis[l] < max) {
+            max = dis[idx] = dis[l];
+            idx = l;
+            for (int j = i * m; j < i * m + k; j++) { // update max again
+                if (dis[j] >= max) {
+                    max = dis[j];
+                    idx = j;
+                }
+            }
+        }
+    }
+
+    // order result
 }
 
 void knn(int *data, int *result)
