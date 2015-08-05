@@ -50,12 +50,14 @@ __global__ void distances2(int *data, int *dis, int m, int n)
     for (int k = 0; k < n; k += BLOCK_SZ) {
         // load sub matrix to shared memory
         matA[tx][ty] = (k + ty < n) ? data[i * n + (k + ty)] : 0;
-        matB[tx][ty] = (k + tx < n) ? data[j * n + (k + tx)] : 0;
+        // matB[tx][ty] = (k + tx < n) ? data[j * n + (k + tx)] : 0;
+        matB[ty][tx] = (k + tx < n) ? data[j * n + (k + tx)] : 0;
         __syncthreads();
 
         if (i < j) { // compute partial sum
             for (int w = 0; w < BLOCK_SZ; w++) {
-                tmp1 = matA[tx][w] - matB[w][ty];
+                // tmp1 = matA[tx][w] - matB[w][ty];
+                tmp1 = matA[tx][w] - matB[ty][w];
                 tmp2 += tmp1 * tmp1;
             }
         }
