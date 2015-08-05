@@ -95,7 +95,7 @@ void knn(int *data, int *result)
     sort<<<block, BLOCK_SZ>>>(d_dis, d_result, m, k);
     cudaEventRecord(stop);
     cudaEventSynchronize(stop);
-    cudaEventElapsedTime(&timer, start, stop);
+    cudaEventElapsedTime(&timer2, start, stop);
 
     cudaMemcpy(result, d_result, sizeof(int) * m * k, cudaMemcpyDeviceToHost);
 
