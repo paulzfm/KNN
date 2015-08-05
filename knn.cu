@@ -157,6 +157,11 @@ __global__ void sort(int *dis, int *result, int m, int k)
     }
 }
 
+__global__ void qsort()
+{
+
+}
+
 void knn(int *data, int *result)
 {
     int *d_data, *d_result, *d_dis;
@@ -175,9 +180,9 @@ void knn(int *data, int *result)
     cudaMemcpy(d_data, data, sizeof(int) * m * n, cudaMemcpyHostToDevice);
 
     cudaEventRecord(start);
-    // distances2<<<dim3(block, block, 1), dim3(BLOCK_SZ, BLOCK_SZ, 1)>>>(d_data, d_dis, m, n);
+    distances2<<<dim3(block, block, 1), dim3(BLOCK_SZ, BLOCK_SZ, 1)>>>(d_data, d_dis, m, n);
     // distances3<<<dim3(block1, block1, 4), dim3(BLOCK_SZ, BLOCK_SZ, 1)>>>(d_data, d_dis, m, n, block1);
-    distances33<<<dim3(block1, block1, 4), dim3(BLOCK_SZ / 2, BLOCK_SZ / 2, 4)>>>(d_data, d_dis, m, n, block1);
+    // distances33<<<dim3(block1, block1, 4), dim3(BLOCK_SZ / 2, BLOCK_SZ / 2, 4)>>>(d_data, d_dis, m, n, block1);
     cudaEventRecord(stop);
     cudaEventSynchronize(stop);
     cudaEventElapsedTime(&timer1, start, stop);
