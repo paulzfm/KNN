@@ -73,8 +73,8 @@ __global__ void distances3(int *data, int *dis, int m, int n)
 {
     int tx = threadIdx.x;
     int ty = threadIdx.y;
-    int i = blockIdx.z * m / 2 + BLOCK_SZ * blockIdx.x + tx;
-    int j = threadIdx.z * n / 2 + BLOCK_SZ * blockIdx.y + ty;
+    int i = BLOCK_SZ * blockIdx.x * (blockIdx.z + 1) + tx;
+    int j = BLOCK_SZ * blockIdx.y * (threadIdx.z + 1) + ty;
     if (i >= m || j >= m) return;
 
     __shared__ int matA[BLOCK_SZ][BLOCK_SZ];
@@ -127,8 +127,7 @@ void knn(int *data, int *result)
     int *d_data, *d_result, *d_dis;
     int *dis = (int*)malloc(sizeof(int) * m * m);
     int block = ceil(m / (double)BLOCK_SZ);
-    int block1 = ceil(m / 2.0 / (double)BLOCK_SZ);
-    int block2 = ceil(n / 2.0 / (double)BLOCK_SZ);
+    int block1 = ceil(block / 2.0);
     float timer;
 
     cudaEvent_t start, stop;
@@ -142,7 +141,7 @@ void knn(int *data, int *result)
     cudaMemcpy(d_data, data, sizeof(int) * m * n, cudaMemcpyHostToDevice);
 
     // distances2<<<dim3(block, block, 1), dim3(BLOCK_SZ, BLOCK_SZ, 1)>>>(d_data, d_dis, m, n);
-    distances3<<<dim3(block1, block2, 2), dim3(BLOCK_SZ, BLOCK_SZ, 2)>>>(d_data, d_dis, m, n);
+    distances3<<<dim3(block1, block1, 2), dim3(BLOCK_SZ, BLOCK_SZ, 2)>>>(d_data, d_dis, m, n);
     cudaStreamSynchronize(0);
     sort<<<block, BLOCK_SZ>>>(d_dis, d_result, m, k);
     cudaMemcpy(result, d_result, sizeof(int) * m * k, cudaMemcpyDeviceToHost);
