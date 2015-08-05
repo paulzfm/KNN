@@ -183,7 +183,7 @@ __global__ void sort_middle(int *dis, int *result)
                 idx = l;
             }
         }
-        result[i * SMALL_K + j] = idx % MIDDLE_M;
+        result[i * MIDDLE_K + j] = idx % MIDDLE_M;
         dis[idx] = INF;
     }
 }
