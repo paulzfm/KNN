@@ -45,7 +45,7 @@
 
 % start of document
 \title{\textbf{k-NN Report}}
-\author{\kai 朱俸民}
+\author{\kai 朱俸民 \quad X1034051}
 \date{\today}
 
 \begin{document}
@@ -60,7 +60,7 @@ This project solves the k-nearest neighbor or k-NN problem on GPU with NVIDIA CU
 
 \subsection{Background}
 
-The k-NN problem is a method for classifying unknown objects based on the closest training samples in feature space. It is a type of supervised learning and is among the simplest of all machine-learning algorithms \cite{1}. The objects are assumed to be a list of vectors $x \in T$, where $T$ is the \textit{training data set} and $x$ stands for each data. Vector $x$ is usually an $n$-dimensional vector, with each dimensional showing a feature of $x$. It is reasonable to see that when two data are nearer, they are more likely to belong to the same class. Thus, when given a set of unknown objects $Q$, which is also called \textit{query data set}, for each object $y \in Q$, we then try to find the $k$ nearest data in $T$. Please note that $k$ is a user defined parameter. Usually, programmers with rich experience can select the best parameter to make the best accuracy. According to which classes these data belong to, we can guess which class is suitable for $y$. 
+The k-NN problem is a method for classifying unknown objects based on the closest training samples in feature space. It is a type of supervised learning and is among the simplest of all machine-learning algorithms \cite{1}. The objects are assumed to be a list of vectors $x \in T$, where $T$ is the \textit{training data set} and $x$ stands for each data. Vector $x$ is usually an $n$-dimensional vector, with each dimensional showing a feature of $x$. It is reasonable to see that when two data are nearer, they are more likely to belong to the same class. Thus, when given a set of unknown objects $Q$, which is also called \textit{query data set}, for each object $y \in Q$, we then try to find the $k$ nearest data in $T$. Please note that $k$ is a user defined parameter. Usually, programmers with rich experience can select the best parameter to make the best accuracy. According to which classes these data belong to, we can guess which class is suitable for $y$.
 
 For example, as \fref{knn} shown, the query object (green circle) should be classified either to the first class of blue squares or to the second class of red triangles. If $k = 3$ (solid line circle) it is assigned to the second class because there are 2 triangles and only 1 square inside the inner circle. If $k = 5$ (dashed line circle) it is assigned to the first class (3 squares vs. 2 triangles inside the outer circle).
 
@@ -79,7 +79,7 @@ Please note that in this project, we use Euclidean distance. And specially, our 
 
 \section{The Brute-force Algorithm}
 
-The Brute-force Algorithm (BF) is a simple and natural way to solve k-NN problem. For each query point $q_i$, the BF algorithm is the following: 
+The Brute-force Algorithm (BF) is a simple and natural way to solve k-NN problem. For each query point $q_i$, the BF algorithm is the following:
 
 \begin{enumerate}
     \item Compute all the distances between points $q_i$ and $t_j$ where $j = 1,2,\ldots, m$.
@@ -89,7 +89,7 @@ The Brute-force Algorithm (BF) is a simple and natural way to solve k-NN problem
 
 Once all query points are done, the algorithm stops.
 
-The main issue of this algorithm is its huge complexity $O(mln)$ for the $ml$ distances computed and $O(lm \log m)$ for the $l$ sorts performed. 
+The main issue of this algorithm is its huge complexity $O(mln)$ for the $ml$ distances computed and $O(lm \log m)$ for the $l$ sorts performed.
 
 However, The BF method is by nature highly-parallelizable. Indeed, all the distances can be computed in parallel. Likewise, the $l$ sorts can be done in parallel. This property makes the BF method perfectly suitable for a GPU implementation. In this project, since query set and training set are equal, we only need to compute less than a half of all distances.
 
