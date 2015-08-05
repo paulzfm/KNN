@@ -247,8 +247,8 @@ void knn(int *data, int *result)
     // cudaEventSynchronize(stop);
     // cudaEventElapsedTime(&timer, start, stop);
 
-    fprintf(stderr, "distance: %.4lf ms\n", timer1);
-    fprintf(stderr, "sort: %.4lf ms\n", timer2);
+    // fprintf(stderr, "distance: %.4lf ms\n", timer1);
+    // fprintf(stderr, "sort: %.4lf ms\n", timer2);
 
     cudaFree(d_data);
     cudaFree(d_result);
