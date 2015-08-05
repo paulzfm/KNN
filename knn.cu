@@ -5,7 +5,7 @@
 
 #define INF 1073741824
 #define BLOCK_SZ 16
-#define MAX_M 16384
+#define HEAP_SZ 32
 
 int m; // nodes
 int n; // dimensions
@@ -161,11 +161,8 @@ __global__ void sort(int *dis, int *result, int m, int k)
     }
 }
 
-__global__ void tsort(int *dis, int *result, int m, int k)
+__device__ void sort_by_key(int *dis, int *result, int i, int m, int k)
 {
-    int i = blockDim.x * blockIdx.x + threadIdx.x;
-    if (i >= m) return;
-
     int values[MAX_M];
     for (int j = 0; j < m; j++) {
         values[j] = j;
@@ -174,6 +171,13 @@ __global__ void tsort(int *dis, int *result, int m, int k)
     for (int j = 0; j < k; j++) {
         result[i * k + j] = values[j];
     }
+}
+
+__global__ void tsort(int *dis, int *result, int m, int k)
+{
+    int i = blockDim.x * blockIdx.x + threadIdx.x;
+    if (i >= m) return;
+    sort_by_key(dis, result, i, m, k);
 }
 
 void knn(int *data, int *result)
