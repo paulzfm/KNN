@@ -186,8 +186,7 @@ __global__ void ssort(int *dis, int *result, int m, int k)
             buffer[idx] = j;
             max = 0;
             for (int l = 0; l < k; l++) {
-                if (dis[start + l] > max ||
-                    (dis[start + l] == max && l < idx)) { // when two distances are the same, index first
+                if (dis[start + l] > max) {
                     max = dis[start + l];
                     idx = l;
                 }
@@ -199,7 +198,8 @@ __global__ void ssort(int *dis, int *result, int m, int k)
     for (int j = 0; j < k; j++) { // find j-th nearest neighbor
         max = INF; // use max as "min" here to save register resource
         for (int l = 0; l < k; l++) {
-            if (dis[start + l] < max) {
+            if (dis[start + l] < max ||
+                (dis[start + l] == max && buffer[l] < buffer[idx])) { // when two distances are the same, index first
                 max = dis[start + l];
                 idx = l;
             }
