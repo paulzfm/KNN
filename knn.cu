@@ -172,18 +172,19 @@ __global__ void ssort(int *dis, int *result, int m, int k)
     int max = 0;
     int idx;
     for (int j = 0; j < k; j++) {
+        buffer[j] = j;
         if (dis[start + j] > max) {
             max = dis[start + j];
             idx = j;
         }
-        buffer[j] = j;
     }
 
     // traverse the remaining elements to select the k minimal
-    for (int j = k + 1; j < m; j++) {
+    for (int j = k; j < m; j++) {
         if (dis[start + j] < max) {
             dis[start + idx] = dis[start + j];
             buffer[idx] = j;
+            max = 0;
             for (int l = 0; l < k; l++) {
                 if (dis[start + l] > max) {
                     max = dis[start + l];
