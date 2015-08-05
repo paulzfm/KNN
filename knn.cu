@@ -165,14 +165,14 @@ __global__ void ssort(int *dis, int *result, int m, int k)
     int i = blockDim.x * blockIdx.x + threadIdx.x;
     if (i >= m) return;
 
-    int start = i * m;
+    const int start = i * m;
     int buffer[BUFFER_SZ];
 
     // find the max value in first k elements
-    int max = INF;
+    int max = 0;
     int idx;
     for (int j = 0; j < k; j++) {
-        if (dis[start + j] >= max) {
+        if (dis[start + j] > max) {
             max = dis[start + j];
             idx = j;
         }
@@ -182,10 +182,10 @@ __global__ void ssort(int *dis, int *result, int m, int k)
     // traverse the remaining elements to select the k minimal
     for (int j = k + 1; j < m; j++) {
         if (dis[start + j] < max) {
-            dis[idx] = dis[start + j];
-            buffer[idx] = start + j;
+            dis[start + idx] = dis[start + j];
+            buffer[idx] = j;
             for (int l = 0; l < k; l++) {
-                if (dis[start + l] >= max) {
+                if (dis[start + l] > max) {
                     max = dis[start + l];
                     idx = l;
                 }
