@@ -170,7 +170,7 @@ __global__ void tsort(int *dis, int *result, int m, int k)
     for (int j = 0; j < m; j++) {
         values[j] = j;
     }
-    thrust::sort_by_key(dis[i * m], dis[(i + 1) * m], values);
+    thrust::sort_by_key(dis + (i * m), dis + (i + 1) * m, values);
     for (int j = 0; j < k; j++) {
         result[i * k + j] = values[j];
     }
