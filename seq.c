@@ -34,9 +34,13 @@ int* load(const char *input)
 }
 
 // sequential brute-force method
-void knn(int *data, int *dis, int *result)
+void knn(int *data, int *result)
 {
+    int *dis = (int*)malloc(sizeof(int) * m * m);
     int i, j, l, tmp, idx;
+    clock_t start, stop;
+
+    start = clock();
 
     // compute distances
     for (i = 0; i < m - 1; i++) {
@@ -54,6 +58,11 @@ void knn(int *data, int *dis, int *result)
         dis[i * m + i] = INF;
     }
 
+    stop = clock();
+    fprintf(stderr, "distance: %.4lf ms\n", 1000.0 * (stop - start) / CLOCKS_PER_SEC);
+
+    start = clock();
+
     // find the nearest neighbor
     for (i = 0; i < m; i++) { // for each node
         for (j = 0; j < k; j++) { // find j-th nearest neighbor
@@ -68,6 +77,11 @@ void knn(int *data, int *dis, int *result)
             dis[idx] = INF;
         }
     }
+
+    stop = clock();
+    fprintf(stderr, "sort: %.4lf ms\n", 1000.0 * (stop - start) / CLOCKS_PER_SEC);
+
+    free(dis);
 }
 
 int main(int argc, char **argv)
@@ -79,22 +93,15 @@ int main(int argc, char **argv)
 
     int *data = load(argv[1]);
     int *result = (int*)malloc(sizeof(int) * m * k);
-    int *dis = (int*)malloc(sizeof(int) * m * m);
 
-    clock_t start, stop;
-    start = clock();
-
-    knn(data, dis, result);
-
-    stop = clock();
-    // printf("time elapsed: %.4lf ms\n", 1000.0 * (stop - start) / CLOCKS_PER_SEC);
+    knn(data, result);
 
     int i, j;
     for (i = 0; i < m; i++) {
-        for (j = 0; j < k - 1; j++) {
+        for (j = 0; j < k; j++) {
             printf("%d ", result[i * k + j]);
         }
-        printf("%d\n", result[i * k + k - 1]);
+        printf("\n");
     }
 
     free(data);

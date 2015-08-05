@@ -273,10 +273,10 @@ int main(int argc, char **argv)
 
     // output
     for (int i = 0; i < m; i++) {
-        for (int j = 0; j < k - 1; j++) {
+        for (int j = 0; j < k; j++) {
             printf("%d ", result[i * k + j]);
         }
-        printf("%d\n", result[i * k + k - 1]);
+        printf("\n");
     }
 
     free(data);
