@@ -69,7 +69,7 @@ __global__ void distances2(int *data, int *dis, int m, int n)
     }
 }
 
-__gobal__ void distances3(int *data, int *dis, int m, int n)
+__global__ void distances3(int *data, int *dis, int m, int n)
 {
     int tx = threadIdx.x;
     int ty = threadIdx.y;
